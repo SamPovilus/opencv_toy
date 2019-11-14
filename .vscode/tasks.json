@@ -1,0 +1,42 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "clean",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceRoot}/build"
+            },
+            "command": "rm -rf ${workspaceRoot}/build/*",
+        },
+        {
+            "label": "cmake",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceRoot}/build"
+            },
+            "command": "cmake ${workspaceRoot}",
+        },
+        {
+            "label": "make",
+            "type": "shell",
+            "command": "make",
+            "options": {
+                "cwd": "${workspaceRoot}/build"
+            },
+            "dependsOn":["cmake"]
+        },
+        {
+            "label": "build",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceRoot}/build"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn": ["make"]
+        }
+    ]
+    }
