@@ -23,8 +23,10 @@ int main( int argc, char** argv )
     {
         imageName = argv[1];
     }
-    Mat image;
-    image = imread( samples::findFile( imageName ), IMREAD_COLOR ); // Read the file
+    Mat image(400,400,CV_8UC1);
+    //cvtColor(image,image,COLOR_BGR2GRAY);
+
+    randn(image,128,49);//imread( samples::findFile( imageName ), IMREAD_COLOR ); // Read the file
     Mat m1 = Mat(image.size[0],image.size[1], CV_8UC3, Scalar(255,255,0));
 
     if( image.empty() )                      // Check for invalid input
@@ -46,7 +48,6 @@ int main( int argc, char** argv )
 
     int xTargetLoc = c.center.x;
     int yTargetLoc = c.center.y;
-        cvtColor(image,image,COLOR_BGR2GRAY);
 
     gauss2d.copyTo(image(Rect(xTargetLoc, yTargetLoc, targetSize, targetSize)));
 
