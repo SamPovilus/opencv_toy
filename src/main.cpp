@@ -24,6 +24,7 @@ int main( int argc, char** argv )
         imageName = argv[1];
     }
     Mat image(400,400,CV_8UC1);
+    Mat zeros = Mat::zeros(image.size(), image.type());
     //cvtColor(image,image,COLOR_BGR2GRAY);
 
     randn(image,128,49);//imread( samples::findFile( imageName ), IMREAD_COLOR ); // Read the file
@@ -39,7 +40,7 @@ int main( int argc, char** argv )
     cv::Mat gaussX = cv::getGaussianKernel(targetSize, -1, CV_32F);
     cv::Mat gaussY = cv::getGaussianKernel(targetSize, -1, CV_32F);
     cv::Mat gauss2d = gaussX * gaussY.t();
-    gauss2d *= 5000;
+    gauss2d *= 50000;
 
     cout << "gauss2d = "<< endl << " "  << gauss2d << endl << endl;
     
@@ -49,8 +50,8 @@ int main( int argc, char** argv )
     int xTargetLoc = c.center.x;
     int yTargetLoc = c.center.y;
 
-    gauss2d.copyTo(image(Rect(xTargetLoc, yTargetLoc, targetSize, targetSize)));
-
+    gauss2d.copyTo(zeros(Rect(xTargetLoc, yTargetLoc, targetSize, targetSize)));
+    image += zeros;
     //Mat target = image.colRange(xTargetLoc,xTargetLoc+targetSize).rowRange(yTargetLoc,yTargetLoc+targetSize);
 
     cout << "image 1= " << endl << image.colRange(xTargetLoc,xTargetLoc+targetSize).rowRange(yTargetLoc,yTargetLoc+targetSize) << endl << endl;
