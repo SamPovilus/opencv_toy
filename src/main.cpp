@@ -7,28 +7,25 @@ using namespace cv;
 using namespace std;
 
 typedef struct {
-    double radius;
+    double x_radius;
+    double y_radius;
     Point center;
 } Circle;
 
 
 int main( int argc, char** argv )
 {
+    int image_x = 400;
+    int image_y = 600;
     Circle c;
-    c.radius = 40;
-    c.center.x = 100;
-    c.center.y = 150;
-    String imageName( "HappyFish.jpg" ); // by default
-    if( argc > 1)
-    {
-        imageName = argv[1];
-    }
-    Mat image(400,400,CV_8UC1);
+    c.x_radius = floor(image_x/2);
+    c.y_radius = floor(image_y/2);
+    c.center.x = floor(image_x/2);
+    c.center.y = floor(image_y/2);
+    Mat image(400,600,CV_32F);
     Mat zeros = Mat::zeros(image.size(), image.type());
-    //cvtColor(image,image,COLOR_BGR2GRAY);
-
-    randn(image,128,49);//imread( samples::findFile( imageName ), IMREAD_COLOR ); // Read the file
-    Mat m1 = Mat(image.size[0],image.size[1], CV_8UC3, Scalar(255,255,0));
+    Mat mask = Mat::zeros(image.size(), image.type());
+    randn(image,0.5,0.1);
 
     if( image.empty() )                      // Check for invalid input
     {
@@ -36,45 +33,31 @@ int main( int argc, char** argv )
         return -1;
     }
 
-    int targetSize = 50;
+    int targetSize = 10;
     cv::Mat gaussX = cv::getGaussianKernel(targetSize, -1, CV_32F);
     cv::Mat gaussY = cv::getGaussianKernel(targetSize, -1, CV_32F);
     cv::Mat gauss2d = gaussX * gaussY.t();
-    gauss2d *= 50000;
+    gauss2d *= -10.0;
 
-    cout << "gauss2d = "<< endl << " "  << gauss2d << endl << endl;
     
     // get the circle's bounding rect
-    Rect boundingRect(c.center.x-c.radius, c.center.y-c.radius, c.radius*2+1,c.radius*2+1);
+    Rect boundingRect(0,0,image_x,image_y);
 
-    int xTargetLoc = c.center.x;
-    int yTargetLoc = c.center.y;
+    int xTargetLoc = 32;
+    int yTargetLoc = 90;
 
     gauss2d.copyTo(zeros(Rect(xTargetLoc, yTargetLoc, targetSize, targetSize)));
     image += zeros;
-    //Mat target = image.colRange(xTargetLoc,xTargetLoc+targetSize).rowRange(yTargetLoc,yTargetLoc+targetSize);
-
-    cout << "image 1= " << endl << image.colRange(xTargetLoc,xTargetLoc+targetSize).rowRange(yTargetLoc,yTargetLoc+targetSize) << endl << endl;
-
-    cout << "image corner = " << endl << image.colRange(0,3).rowRange(0,3) << endl << endl;
 
     // obtain the image ROI:
-    //Mat circleROI(image, boundingRect);
-
-    cout << "image 2= " << endl << image.colRange(xTargetLoc,xTargetLoc+targetSize).rowRange(yTargetLoc,yTargetLoc+targetSize) << endl << endl;
-    //cout << "circleROI 1= " << endl << circleROI << endl << endl;
+    //Mat circleROI(mask, boundingRect);
 
     //draw the circle
     //circle(circleROI, Point(c.radius, c.radius), c.radius, Scalar::all(1), -1);
+    ellipse(mask,Point(c.center.x,c.center.y),Size(c.x_radius,c.y_radius),0,0,0,Scalar::all(1), -1);
     //cout << "circleROI = " << endl << circleROI << endl << endl;
-
-    cout << "image 4= " << endl << image.colRange(xTargetLoc,xTargetLoc+targetSize).rowRange(yTargetLoc,yTargetLoc+targetSize) << endl << endl;
-
-    //gauss2d.copyTo(target );
-
-    cout << "image 5= " << endl << image.colRange(xTargetLoc,xTargetLoc+targetSize).rowRange(yTargetLoc,yTargetLoc+targetSize) << endl << endl;
-
-
+    cout << "mask = " << endl << mask << endl << endl;
+    image += mask;
     //cvtColor(image,image,COLOR_BGR2GRAY);
     namedWindow( "Display window", WINDOW_AUTOSIZE ); // Create a window for display.
     imshow( "Display window", image );                // Show our image inside it.
