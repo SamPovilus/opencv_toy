@@ -8,7 +8,7 @@ set( NAME_SRC
 set( NAME_HEADERS       
 #     include/header.h
 )
-
+set(CMAKE_BUILD_TYPE Debug)
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/include )
 INCLUDE_DIRECTORIES( ${OpenCV_INCLUDE_DIRS} )
 message(${OpenCV_INCLUDE_DIRS})
